@@ -34,6 +34,9 @@ class LaserMapping {
         LOG(INFO) << "laser mapping deconstruct";
     }
 
+    double z_min_range_;  // [추가] 실외 환경 최적화를 위한 Z축 필터링 범위 변수 추가
+    double z_max_range_;  // [추가] 실외 환경 최적화를 위한 Z축 필터링 범위 변수 추가
+
     /// init with ros
     bool InitROS(ros::NodeHandle &nh);
 

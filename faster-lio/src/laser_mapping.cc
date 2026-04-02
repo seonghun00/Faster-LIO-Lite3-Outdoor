@@ -73,6 +73,8 @@ bool LaserMapping::LoadParams(ros::NodeHandle &nh) {
     nh.param<bool>("common/time_sync_en", time_sync_en_, false);
     nh.param<double>("filter_size_surf", filter_size_surf_min, 0.5);
     nh.param<double>("filter_size_map", filter_size_map_min_, 0.0);
+    nh.param<double>("filter/z_min_range", z_min_range_, -0.5);    // [추가] YAML에서 Z축 필터 범위를 읽어옴 (Z 하한값)
+    nh.param<double>("filter/z_max_range", z_max_range_, 1.5);     // [추가] YAML에서 Z축 필터 범위를 읽어옴 (Z 상한값)
     nh.param<double>("cube_side_length", cube_len_, 200);
     nh.param<float>("mapping/det_range", det_range_, 300.f);
     nh.param<double>("mapping/gyr_cov", gyr_cov, 0.1);
@@ -373,6 +375,20 @@ void LaserMapping::StandardPCLCallBack(const sensor_msgs::PointCloud2::ConstPtr 
 
             PointCloudType::Ptr ptr(new PointCloudType());
             preprocess_->Process(msg, ptr);
+
+            /////
+            // [추가] 실외 환경 최적화: 설정된 Z축 범위를 벗어나는 노이즈 제거
+            PointCloudType::Ptr filtered_ptr(new PointCloudType());
+            for (auto &p : ptr->points) {
+                if (p.z >= z_min_range_ && p.z <= z_max_range_) {
+                    filtered_ptr->points.push_back(p);
+                }
+            }
+            filtered_ptr->width = filtered_ptr->points.size();
+            filtered_ptr->height = 1;
+            ptr = filtered_ptr; // 걸러진 데이터를 다시 ptr에 담기
+            /////
+
             lidar_buffer_.push_back(ptr);
             time_buffer_.push_back(msg->header.stamp.toSec());
             last_timestamp_lidar_ = msg->header.stamp.toSec();
