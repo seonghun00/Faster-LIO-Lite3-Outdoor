@@ -1,1 +1,1 @@
-# dr_open_slam
+# faster_LIO for Lite3 Outdoor
