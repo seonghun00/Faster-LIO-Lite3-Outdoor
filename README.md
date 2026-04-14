@@ -41,7 +41,7 @@
 최적화된 필터링 로직을 통해 노이즈 없이 깔끔하게 구현된 야외 광장 맵입니다.
 
 <p align="center">
-  <img src="./assets/대학 본부 맵핑 사진.png" width="100%" alt="Mapping Result" />
+  <img width="342" height="388" alt="대학 본부 맵핑 사진" src="https://github.com/user-attachments/assets/8ea24905-06d3-40e3-894e-8229d5ae2fa4" />
 </p>
 
 ---
@@ -53,4 +53,4 @@
 
 ---
 
-© 2026 Seong-hun Bae. Major in Robot Engineering, Yeungnam University.
+© 2026 Seong-hun Bae.
