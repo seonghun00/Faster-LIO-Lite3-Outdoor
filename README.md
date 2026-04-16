@@ -16,8 +16,8 @@
 ---
 
 ## 🛠 Tech Stack
-* **Robot**: Unitree Lite3 (Quadruped Robot)
-* **Sensor**: Livox Mid-360 LiDAR
+* **Robot**: Deep Robotics Lite3 (Quadruped Robot)
+* **Sensor**: C16-360 LiDAR
 * **OS**: Ubuntu 20.04 (ROS Noetic)
 * **Algorithm**: Faster-LIO (Optimized)
 
