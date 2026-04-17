@@ -9,6 +9,8 @@
   <a href="https://releases.ubuntu.com/20.04/"><img src="https://img.shields.io/badge/Ubuntu_20.04-E95420?style=flat&logo=ubuntu&logoColor=white"></a>
 </p>
 
+4족 보행 로봇은 보행 시 발생하는 진동이 LiDAR 데이터의 품질을 저하시키고 실시간 연산에 부담을 줌. Faster-LIO 알고리즘을 Lite3 로봇에 최적화하여, 야외 광장과 같은 넓은 환경에서 끊김 없고 정확한 3D 맵을 실시간으로 생성하는 시스템 구축을 목적.
+
 ---
 
 ## 🚀 Key Features
