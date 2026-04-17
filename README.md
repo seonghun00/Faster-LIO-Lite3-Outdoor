@@ -4,6 +4,10 @@
 
 # 🤖 Quadruped Robot Outdoor Mapping Optimization
 > **Faster-LIO 기반 Lite3 로봇의 야외 환경 매핑 데이터 최적화**
+<p align="left">
+  <a href="http://wiki.ros.org/noetic"><img src="https://img.shields.io/badge/ROS_Noetic-22314E?style=flat&logo=ros&logoColor=white"></a>
+  <a href="https://releases.ubuntu.com/20.04/"><img src="https://img.shields.io/badge/Ubuntu_20.04-E95420?style=flat&logo=ubuntu&logoColor=white"></a>
+</p>
 
 ---
 
