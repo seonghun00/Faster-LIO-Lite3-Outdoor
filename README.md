@@ -5,8 +5,8 @@
 # 🤖 Quadruped Robot Outdoor Mapping Optimization
 > **Faster-LIO 기반 Lite3 로봇의 야외 환경 매핑 데이터 최적화**
 <p align="left">
-  <a href="http://wiki.ros.org/noetic"><img src="https://img.shields.io/badge/ROS_Noetic-22314E?style=flat&logo=ros&logoColor=white"></a>
   <a href="https://releases.ubuntu.com/20.04/"><img src="https://img.shields.io/badge/Ubuntu_20.04-E95420?style=flat&logo=ubuntu&logoColor=white"></a>
+  <a href="http://wiki.ros.org/noetic"><img src="https://img.shields.io/badge/ROS_Noetic-22314E?style=flat&logo=ros&logoColor=white"></a>
 </p>
 
 4족 보행 로봇은 보행 시 발생하는 진동이 LiDAR 데이터의 품질을 저하시키고 실시간 연산에 부담을 줌. Faster-LIO 알고리즘을 Lite3 로봇에 최적화하여, 야외 광장과 같은 넓은 환경에서 끊김 없고 정확한 3D 맵을 실시간으로 생성하는 시스템 구축을 목적.
