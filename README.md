@@ -3,7 +3,7 @@
 </p>
 
 # 🤖 Quadruped Robot Outdoor Mapping Optimization
-> **Faster-LIO 기반 Lite3 로봇의 야외 환경 매핑 데이터 최적화** 
+> **Faster-LIO 기반 Lite3 로봇의 야외 환경 매핑 데이터 최적화**
 <p align="left">
   <a href="https://releases.ubuntu.com/20.04/"><img src="https://img.shields.io/badge/Ubuntu_20.04-E95420?style=flat&logo=ubuntu&logoColor=white"></a>
   <a href="http://wiki.ros.org/noetic"><img src="https://img.shields.io/badge/ROS_Noetic-22314E?style=flat&logo=ros&logoColor=white"></a>
@@ -23,7 +23,7 @@
 
 ## 🛠 Tech Stack
 * **Robot**: Deep Robotics Lite3 (Quadruped Robot)
-* **Sensor**: C16-360 LiDAR
+* **Sensor**: lslidar-C16 (360)
 * **OS**: Ubuntu 20.04 (ROS Noetic)
 * **Algorithm**: Faster-LIO (Optimized)
 
@@ -43,7 +43,7 @@
 
 ## 📸 Mapping Results
 
-### 📍 영남대학교 대학 본부 광장 (YU Plaza)
+### 📍 영남대학교 대학 본부 광장
 최적화된 필터링 로직을 통해 노이즈 없이 깔끔하게 구현된 야외 광장 맵입니다.
 
 <p align="center">
