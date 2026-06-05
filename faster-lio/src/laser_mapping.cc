@@ -73,8 +73,6 @@ bool LaserMapping::LoadParams(ros::NodeHandle &nh) {
     nh.param<bool>("common/time_sync_en", time_sync_en_, false);
     nh.param<double>("filter_size_surf", filter_size_surf_min, 0.5);
     nh.param<double>("filter_size_map", filter_size_map_min_, 0.0);
-    nh.param<double>("filter/z_min_range", z_min_range_, -0.5);    // [추가] YAML에서 Z축 필터 범위를 읽어옴 (Z 하한값)
-    nh.param<double>("filter/z_max_range", z_max_range_, 1.5);     // [추가] YAML에서 Z축 필터 범위를 읽어옴 (Z 상한값)
     nh.param<double>("cube_side_length", cube_len_, 200);
     nh.param<float>("mapping/det_range", det_range_, 300.f);
     nh.param<double>("mapping/gyr_cov", gyr_cov, 0.1);
@@ -169,6 +167,15 @@ bool LaserMapping::LoadParamsFromYAML(const std::string &yaml_file) {
 
         filter_size_surf_min = yaml["filter_size_surf"].as<float>();
         filter_size_map_min_ = yaml["filter_size_map"].as<float>();
+        
+        // =========================================================================
+        // 🟥 수정 1: 오프라인 파라미터 파싱 로직 추가 (성훈 기여 파트)
+        // =========================================================================
+        // [설명]: ROS 없이 구동할 때도 파라미터 파일에서 Z축 범위를 가져올 수 있도록 추가.
+        z_min_range_ = yaml["filter"]["z_min_range"].as<double>(-0.5);
+        z_max_range_ = yaml["filter"]["z_max_range"].as<double>(1.5);
+        // =========================================================================
+
         cube_len_ = yaml["cube_side_length"].as<int>();
         det_range_ = yaml["mapping"]["det_range"].as<float>();
         gyr_cov = yaml["mapping"]["gyr_cov"].as<float>();
@@ -285,13 +292,35 @@ void LaserMapping::Run() {
         return;
     }
 
-    /// the first scan
+    // =========================================================================
+    // 🟥 수정 2: 첫 스캔 맵 등록 예외 처리 수정
+    // =========================================================================
+    /* ◀ 원본 코드 주석 처리 ▶
     if (flg_first_scan_) {
         ivox_->AddPoints(scan_undistort_->points);
         first_lidar_time_ = measures_.lidar_bag_time_;
         flg_first_scan_ = false;
         return;
     }
+    */
+    // [설명]: 시스템 가동 후 맨 처음 찍히는 프레임(초기 지도 빌드용) 내부에 포함된 
+    // 하늘 허상이나 바닥 뚫림 노이즈가 누적 맵 인덱스에 저장되어 연산을 망치는 것을 선제 방어.
+    if (flg_first_scan_) {
+        PointVector first_filtered_pts;
+        first_filtered_pts.reserve(scan_undistort_->points.size());
+        for (auto &p : scan_undistort_->points) {
+            if (p.z >= z_min_range_ && p.z <= z_max_range_) {
+                first_filtered_pts.push_back(p);
+            }
+        }
+        
+        ivox_->AddPoints(first_filtered_pts); // 필터링을 거친 깨끗한 점들만 초기화 데이터로 투입
+        first_lidar_time_ = measures_.lidar_bag_time_;
+        flg_first_scan_ = false;
+        return;
+    }
+    // =========================================================================
+    
     flg_EKF_inited_ = (measures_.lidar_bag_time_ - first_lidar_time_) >= options::INIT_TIME;
 
     /// downsample
@@ -375,20 +404,6 @@ void LaserMapping::StandardPCLCallBack(const sensor_msgs::PointCloud2::ConstPtr 
 
             PointCloudType::Ptr ptr(new PointCloudType());
             preprocess_->Process(msg, ptr);
-
-            /////
-            // [추가] 실외 환경 최적화: 설정된 Z축 범위를 벗어나는 노이즈 제거
-            PointCloudType::Ptr filtered_ptr(new PointCloudType());
-            for (auto &p : ptr->points) {
-                if (p.z >= z_min_range_ && p.z <= z_max_range_) {
-                    filtered_ptr->points.push_back(p);
-                }
-            }
-            filtered_ptr->width = filtered_ptr->points.size();
-            filtered_ptr->height = 1;
-            ptr = filtered_ptr; // 걸러진 데이터를 다시 ptr에 담기
-            /////
-
             lidar_buffer_.push_back(ptr);
             time_buffer_.push_back(msg->header.stamp.toSec());
             last_timestamp_lidar_ = msg->header.stamp.toSec();
@@ -460,19 +475,19 @@ bool LaserMapping::SyncPackages() {
 
     /*** push a lidar scan ***/
     if (!lidar_pushed_) {
-        measures_.lidar_ = lidar_buffer_.front();
+        measures_.lidar = lidar_buffer_.front();
         measures_.lidar_bag_time_ = time_buffer_.front();
 
-        if (measures_.lidar_->points.size() <= 1) {
+        if (measures_.lidar->points.size() <= 1) {
             LOG(WARNING) << "Too few input point cloud!";
             lidar_end_time_ = measures_.lidar_bag_time_ + lidar_mean_scantime_;
-        } else if (measures_.lidar_->points.back().curvature / double(1000) < 0.5 * lidar_mean_scantime_) {
+        } else if (measures_.lidar->points.back().curvature / double(1000) < 0.5 * lidar_mean_scantime_) {
             lidar_end_time_ = measures_.lidar_bag_time_ + lidar_mean_scantime_;
         } else {
             scan_num_++;
-            lidar_end_time_ = measures_.lidar_bag_time_ + measures_.lidar_->points.back().curvature / double(1000);
+            lidar_end_time_ = measures_.lidar_bag_time_ + measures_.lidar->points.back().curvature / double(1000);
             lidar_mean_scantime_ +=
-                (measures_.lidar_->points.back().curvature / double(1000) - lidar_mean_scantime_) / scan_num_;
+                (measures_.lidar->points.back().curvature / double(1000) - lidar_mean_scantime_) / scan_num_;
         }
 
         measures_.lidar_end_time_ = lidar_end_time_;
@@ -485,11 +500,11 @@ bool LaserMapping::SyncPackages() {
 
     /*** push imu_ data, and pop from imu_ buffer ***/
     double imu_time = imu_buffer_.front()->header.stamp.toSec();
-    measures_.imu_.clear();
+    measures_.imu.clear();
     while ((!imu_buffer_.empty()) && (imu_time < lidar_end_time_)) {
         imu_time = imu_buffer_.front()->header.stamp.toSec();
         if (imu_time > lidar_end_time_) break;
-        measures_.imu_.push_back(imu_buffer_.front());
+        measures_.imu.push_back(imu_buffer_.front());
         imu_buffer_.pop_front();
     }
 
@@ -517,13 +532,31 @@ void LaserMapping::MapIncremental() {
         index[i] = i;
     }
 
+    // =========================================================================
+    // 🟥 수정 3: 지구 중심 전역 고도(World Frame) Z 필터 전면 교체
+    // =========================================================================
+    /* ◀ 원본 코드 주석 처리 ▶
     std::for_each(std::execution::unseq, index.begin(), index.end(), [&](const size_t &i) {
-        /* transform to world frame */
         PointBodyToWorld(&(scan_down_body_->points[i]), &(scan_down_world_->points[i]));
-
-        /* decide if need add to map */
         PointType &point_world = scan_down_world_->points[i];
         if (!nearest_points_[i].empty() && flg_EKF_inited_) {
+    */
+    // [설명]: 로봇 좌표계 기준이 아닌, 변환이 완료된 '전역 좌표계 절대 고도 Z(point_world.z)'를
+    // 기준으로 데이터 유효성을 즉시 검사함. 이 덕분에 4족보행 로봇이 경사로(오르막/내리막)에서
+    // 피칭이 발생해 심하게 흔들려도 진짜 주행 노면 데이터가 지워지던 버그를 해결.
+    std::for_each(std::execution::unseq, index.begin(), index.end(), [&](const size_t &i) {
+        /* 점구름 데이터를 실제 세계(월드) 전역 좌표계로 실시간 회전/이동 변환 */
+        PointBodyToWorld(&(scan_down_body_->points[i]), &(scan_down_world_->points[i]));
+
+        PointType &point_world = scan_down_world_->points[i];
+
+        // [Z축 최적화 필터 작동]: 변환된 절대 고도 값이 범위를 벗어나면 증분 지도 등록 절차를 생략하고 즉시 스킵
+        if (point_world.z < z_min_range_ || point_world.z > z_max_range_) {
+            return; 
+        }
+
+        if (!nearest_points_[i].empty() && flg_EKF_inited_) {
+    // =========================================================================
             const PointVector &points_near = nearest_points_[i];
 
             Eigen::Vector3f center =
