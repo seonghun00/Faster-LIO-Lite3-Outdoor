@@ -7,8 +7,8 @@ preprocess:
     lidar_type: 4                # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR, 4 for C16 Leishen Lidar
     scan_line: 16
     blind: 1.0
-    z_min_range: -3.0     # /////[추가]///// 바닥 노이즈 제거 (최종값)
-    z_max_range: 5.0      # /////[추가]///// 위쪽 노이즈 제거 (최종값)
+    z_min_range: -0.5     # [추가] 야외 환경 최적화 Z축 하한값 (바닥 노이즈 제거)
+    z_max_range: 1.5      # [추가] 야외 환경 최적화 Z축 상한값 (하늘 허상 제거)
     time_scale: 1e-3
 
 mapping:
