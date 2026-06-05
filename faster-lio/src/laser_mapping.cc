@@ -169,7 +169,7 @@ bool LaserMapping::LoadParamsFromYAML(const std::string &yaml_file) {
         filter_size_map_min_ = yaml["filter_size_map"].as<float>();
         
         // =========================================================================
-        // 🟥 수정 1: 오프라인 파라미터 파싱 로직 추가 (성훈 기여 파트)
+        // 🟥 수정 1: 오프라인 파라미터 Z-필터 값 추가
         // =========================================================================
         // [설명]: ROS 없이 구동할 때도 파라미터 파일에서 Z축 범위를 가져올 수 있도록 추가.
         z_min_range_ = yaml["filter"]["z_min_range"].as<double>(-0.5);
@@ -295,7 +295,7 @@ void LaserMapping::Run() {
     // =========================================================================
     // 🟥 수정 2: 첫 스캔 맵 등록 예외 처리 수정
     // =========================================================================
-    /* ◀ 원본 코드 주석 처리 ▶
+    /* ◀ 원본 코드 ▶
     if (flg_first_scan_) {
         ivox_->AddPoints(scan_undistort_->points);
         first_lidar_time_ = measures_.lidar_bag_time_;
@@ -535,7 +535,7 @@ void LaserMapping::MapIncremental() {
     // =========================================================================
     // 🟥 수정 3: 지구 중심 전역 고도(World Frame) Z 필터 전면 교체
     // =========================================================================
-    /* ◀ 원본 코드 주석 처리 ▶
+    /* ◀ 원본 코드 ▶
     std::for_each(std::execution::unseq, index.begin(), index.end(), [&](const size_t &i) {
         PointBodyToWorld(&(scan_down_body_->points[i]), &(scan_down_world_->points[i]));
         PointType &point_world = scan_down_world_->points[i];
