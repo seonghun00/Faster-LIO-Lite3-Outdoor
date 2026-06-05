@@ -12,6 +12,10 @@
     <param name="user_name" type="string" value="nvidia"/>
 
     <param name="runtime_pos_log_enable" type="bool" value="0" />
+
+    <param name="filter/z_min_range" type="double" value="-0.5" />    <!-- [추가] Z축 하한값 파라미터 설정 추가 -->
+    <param name="filter/z_max_range" type="double" value="1.5" />     <!-- [추가] Z축 상한값 파라미터 설정 추가 -->
+
     <node pkg="faster_lio" type="run_mapping_online" name="laserMapping" output="screen" />
 
     <group if="$(arg rviz)">
