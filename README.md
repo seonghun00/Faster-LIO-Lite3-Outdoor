@@ -13,6 +13,15 @@
 
 ---
 
+## 📂 Core Modules (수정한 파일 바로가기)
+> 야외 경사로 및 노이즈 환경 최적화를 위해 수정하고 반영한 핵심 모듈입니다.
+
+* 📄 [laser_mapping.cc](faster-lio/src/laser_mapping.cc) :로봇이 기울어져도 실제 바닥 고도를 정확하게 인식하여 노이즈를 걸러내는 핵심 필터 코드 구현
+* 📄 [c16.yaml](faster-lio/config/c16.yaml) : 야외 환경 최적화용 전역 Z축 상·하한 한계값(Z-limit) 파라미터 정의
+* 📄 [mapping_c16.launch](faster-lio/launch/mapping_c16.launch) : 설정한 Z축 높이 필터 기준값들로 실시간 매핑 실행하는 런치 파일
+
+---
+
 ## 🚀 Key Features
 * **Real-time SLAM**: Faster-LIO 알고리즘을 활용한 고속 4족 보행 로봇 맵핑
 * **Voxel Grid Optimization**: 환경에 최적화된 Voxel 크기 조절을 통해 연산량 절감
