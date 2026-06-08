@@ -52,19 +52,31 @@
 
 ## 📸 Mapping Results
 
-### 📍 영남대학교 대학 본부 광장
-최적화된 필터링 로직을 통해 노이즈 없이 깔끔하게 구현된 야외 광장 맵입니다.
+### 📍 학과 건물 실내·외 매핑 결과 (.pcd)
+최적화된 필터링 로직을 적용하여 노이즈를 효과적으로 억제하고 정밀하게 생성된 실내외 복합 환경의 Point Cloud Data 결과물입니다.
 
 <p align="center">
-  <img width="342" height="388" alt="대학 본부 맵핑 사진" src="https://github.com/user-attachments/assets/8ea24905-06d3-40e3-894e-8229d5ae2fa4" />
+  <img src="https://github.com/user-attachments/assets/cb7b84ce-d115-4013-a569-622ee8d0297d" width="48%" alt="실내 환경 PCD" />
+  <img src="https://github.com/user-attachments/assets/11251370-f608-4a21-a134-3449291945b2" width="48%" alt="실외 환경 PCD" />
 </p>
 
+
+### 📍 대학 본부 광장 전체 매핑 결과
+<p align="center">
+  <img width="500" alt="대학 본부 맵핑 사진" src="https://github.com/user-attachments/assets/8ea24905-06d3-40e3-894e-8229d5ae2fa4" />
+</p>
 ---
 
 ## 💻 How to Run
 1. **Dependency**: `Livox-SDK2` 및 `Faster-LIO` 환경 구성 확인
 2. **Parameters**: `config/params.yaml`에서 Voxel 크기와 Z-limit 값 조정
 3. **Launch**: 로봇과 LiDAR 연결 후 전용 Launch 파일 실행
+
+---
+
+> **Notice:** 본 프로젝트는 개발 및 실증 검증이 완료되어 현재 유지보수가 종료된 레포지토리입니다. 
+* 제공되는 소스코드는 특정 하드웨어(Lite3, lslidar-C16) 및 실험 환경에 맞춰 최적화되어 있으므로, 실행 환경 및 센서 캘리브레이션 상태에 따라 정상적으로 동작하지 않거나 추가적인 파라미터 튜닝이 필요할 수 있습니다. 
+* 코드 활용 시 하드웨어 호환성 및 종속성 패키지(ROS, SDK 버전 등)를 반드시 재확인하시기 바랍니다.
 
 ---
 
