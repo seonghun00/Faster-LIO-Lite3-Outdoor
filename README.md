@@ -65,6 +65,7 @@
 <p align="center">
   <img width="500" alt="대학 본부 맵핑 사진" src="https://github.com/user-attachments/assets/8ea24905-06d3-40e3-894e-8229d5ae2fa4" />
 </p>
+
 ---
 
 ## 💻 How to Run
